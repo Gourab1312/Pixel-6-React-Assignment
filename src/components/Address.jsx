@@ -1,7 +1,17 @@
 import React from "react";
 import Loader from "./Loader";
 
-function Address({ address, allAddressLength, index, postcodeLoading, onChange, onRemove }) {
+const states = ["Maharastra", "West Bengal", "Karnataka"];
+const cities = ["Kolkata", "Pune", "Bangalore"];
+
+function Address({
+  address,
+  allAddressLength,
+  index,
+  postcodeLoading,
+  onChange,
+  onRemove,
+}) {
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700">Address</label>
@@ -32,22 +42,46 @@ function Address({ address, allAddressLength, index, postcodeLoading, onChange, 
           />
           {postcodeLoading && <Loader />}
         </div>
-        <input
-          type="text"
-          value={address.state}
-          onChange={(e) => onChange(index, "state", e.target.value)}
-          placeholder="State"
-          required
-          className="mt-1 px-4 py-2.5 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-        />
-        <input
-          type="text"
-          value={address.city}
-          onChange={(e) => onChange(index, "city", e.target.value)}
-          placeholder="City"
-          required
-          className="mt-1 px-4 py-2.5 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-        />
+        <div className="relative">
+          <select
+            value={address.state}
+            onChange={(e) => onChange(index, "state", e.target.value)}
+            required
+            className="appearance-none bg-white mt-1 px-4 py-2.5 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          >
+            <option value="" disabled>
+              Select State
+            </option>
+            {states.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">
+            <img className="h-2 w-3" src={'/dropdown-icon.png'} />
+          </div>
+        </div>
+        <div className="relative">
+          <select
+            value={address.city}
+            onChange={(e) => onChange(index, "city", e.target.value)}
+            required
+            className="appearance-none bg-white mt-1 px-4 py-2.5 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          >
+            <option value="" disabled>
+              Select City
+            </option>
+            {cities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">
+            <img className="h-2 w-3" src={'/dropdown-icon.png'} />
+          </div>
+        </div>
         <button
           type="button"
           onClick={onRemove}
