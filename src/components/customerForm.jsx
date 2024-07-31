@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 import { useCustomerContext } from "../context/CustomerContext";
 import { verifyPAN, getPostcodeDetails } from "../utils/api";
 import {
@@ -9,6 +9,7 @@ import {
   validatePostcode,
 } from "../utils/validators";
 import Address from "./Address";
+import Loader from "./Loader";
 
 function CustomerForm() {
   const { dispatch, state } = useCustomerContext();
@@ -25,12 +26,18 @@ function CustomerForm() {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [panLoading, setPanLoading] = useState(false);
+  const [postcodeLoading, setPostcodeLoading] = useState(false);
 
   useEffect(() => {
     if (validatePAN(customer.pan)) {
+      setPanLoading(true);
       verifyPAN(customer.pan).then((response) => {
         if (response.isValid) {
-          setCustomer((prev) => ({ ...prev, fullName: response.fullName }));
+          setTimeout(() => {
+            setCustomer((prev) => ({ ...prev, fullName: response.fullName }));
+            setPanLoading(false);
+          }, 1000);
         }
       });
     }
@@ -38,7 +45,7 @@ function CustomerForm() {
 
   useEffect(() => {
     if (id) {
-      const customerToEdit = state.customers.find(c => c.id === parseInt(id));
+      const customerToEdit = state.customers.find((c) => c.id === parseInt(id));
       if (customerToEdit) {
         setCustomer(customerToEdit);
       }
@@ -56,12 +63,16 @@ function CustomerForm() {
     setCustomer((prev) => ({ ...prev, addresses: newAddresses }));
 
     if (field === "postcode" && validatePostcode(value)) {
+      setPostcodeLoading(true);
       getPostcodeDetails(value).then((response) => {
-        if (response.status === "Success") {
-          newAddresses[index].state = response.state[0].name;
-          newAddresses[index].city = response.city[0].name;
-          setCustomer((prev) => ({ ...prev, addresses: newAddresses }));
-        }
+        setTimeout(() => {
+          if (response.status === "Success") {
+            newAddresses[index].state = response.state[0].name;
+            newAddresses[index].city = response.city[0].name;
+            setCustomer((prev) => ({ ...prev, addresses: newAddresses }));
+          }
+          setPostcodeLoading(false);
+        }, 1000);
       });
     }
   };
@@ -113,21 +124,19 @@ function CustomerForm() {
     e.preventDefault();
     if (validateForm()) {
       setLoading(true);
-      setTimeout(() => {
-        if (id) {
-          dispatch({
-            type: "UPDATE_CUSTOMER",
-            payload: { ...customer, id: parseInt(id) },
-          });
-        } else {
-          dispatch({
-            type: "ADD_CUSTOMER",
-            payload: { ...customer, id: Date.now() },
-          });
-        }
-        setLoading(false);
-        navigate('/customer-list');
-      }, 1000);
+      if (id) {
+        dispatch({
+          type: "UPDATE_CUSTOMER",
+          payload: { ...customer, id: parseInt(id) },
+        });
+      } else {
+        dispatch({
+          type: "ADD_CUSTOMER",
+          payload: { ...customer, id: Date.now() },
+        });
+      }
+      setLoading(false);
+      navigate("/customer-list");
     }
   };
 
@@ -136,7 +145,9 @@ function CustomerForm() {
       onSubmit={handleSubmit}
       className="max-w-4xl mx-auto p-4 my-4 bg-white shadow-lg rounded-md flex flex-col items-between justify-start md:justify-center"
     >
-    <h1 className="text-2xl lg:text-4xl mb-4 lg:mb-10 w-full text-center">{id ? 'Edit Customer' : 'Add Customer'}</h1>
+      <h1 className="text-2xl lg:text-4xl mb-4 lg:mb-10 w-full text-center">
+        {id ? "Edit Customer" : "Add Customer"}
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label
@@ -145,16 +156,19 @@ function CustomerForm() {
           >
             PAN:
           </label>
-          <input
-            type="text"
-            id="pan"
-            name="pan"
-            value={customer.pan}
-            onChange={handleInputChange}
-            maxLength="10"
-            required
-            className="mt-1 px-4 py-2.5 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              id="pan"
+              name="pan"
+              value={customer.pan}
+              onChange={handleInputChange}
+              maxLength="10"
+              required
+              className="mt-1 px-4 py-2.5 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+            {panLoading && <Loader />}
+          </div>
           {errors.pan && (
             <span className="text-red-600 text-sm">{errors.pan}</span>
           )}
@@ -228,6 +242,7 @@ function CustomerForm() {
             address={address}
             allAddressLength={customer.addresses.length}
             index={index}
+            postcodeLoading={postcodeLoading}
             onChange={handleAddressChange}
             onRemove={() => removeAddress(index)}
           />
@@ -247,7 +262,7 @@ function CustomerForm() {
           disabled={loading}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-          {loading ? "Saving..." : (id ? "Update Customer" : "Add Customer")}
+          {loading ? "Saving..." : id ? "Update Customer" : "Add Customer"}
         </button>
       </div>
     </form>
