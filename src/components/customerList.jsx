@@ -15,7 +15,8 @@ function CustomerList() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-md flex-col items-between justify-center w-full px-6 lg:px-12">
+    <div className="mx-auto p-4 bg-white w-full flex justify-center items-center">
+    <div className='flex-col items-between justify-start md:justify-center w-full lg:w-3/5 px-6 lg:px-12 shadow-lg rounded-md'>
       <h2 className="text-2xl lg:text-4xl mb-4 lg:mb-10 w-full text-center">Customer List</h2>
       <ul className='w-full'>
         {state.customers.map((customer, index) => (
@@ -44,6 +45,7 @@ function CustomerList() {
       >
         Add New Customer
       </button>
+      </div>
     </div>
   );
 }

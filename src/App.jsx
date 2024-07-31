@@ -11,7 +11,7 @@ import CustomerList from './components/customerList'
 function App() {
   return (
     <CustomerProvider>
-      <div className="App min-h-screen w-full flex justify-center items-center">
+      <div className="App min-h-screen w-full flex justify-center items-start md:items-center">
         <Routes>
           <Route path="/" element={<CustomerForm />} />
           <Route path="/edit-customer/:id" element={<CustomerForm />} />

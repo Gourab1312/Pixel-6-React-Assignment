@@ -134,7 +134,7 @@ function CustomerForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-md flex flex-col items-between justify-center"
+      className="max-w-4xl mx-auto p-4 my-4 bg-white shadow-lg rounded-md flex flex-col items-between justify-start md:justify-center"
     >
     <h1 className="text-2xl lg:text-4xl mb-4 lg:mb-10 w-full text-center">{id ? 'Edit Customer' : 'Add Customer'}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
