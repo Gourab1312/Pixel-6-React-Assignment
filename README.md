@@ -1,8 +1,7 @@
-# React + Vite
+Steps to set up the application locally : 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. Clone the project using git clone https://github.com/Gourab1312/Pixel-6-React-Assignment.git
+2. Download the dependencies using npm or yarn
+3. Run the application locally using 'npm run dev' command
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The app is hosted using vercel, live link : https://pixel-6-react-assignment.vercel.app/
