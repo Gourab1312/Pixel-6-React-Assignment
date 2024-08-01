@@ -10,6 +10,7 @@ function CustomerList() {
     dispatch({ type: 'DELETE_CUSTOMER', payload: id });
   };
 
+  //using navigate from react router dom, to go the edit page with the dynamic id and serve the prefilled customerForm component
   const handleEdit = (id) => {
     navigate(`/edit-customer/${id}`);
   };

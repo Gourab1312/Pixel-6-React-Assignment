@@ -1,12 +1,16 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
+//creating the context to globally get the customers data
 const CustomerContext = createContext();
 
+//function to get the data from the localstorage if any
 function loadCustomersFromLocalStorage() {
   const storedCustomers = localStorage.getItem('customers');
   return storedCustomers ? JSON.parse(storedCustomers) : [];
 }
 
+// main reducer function that sets the customers array on load, adds, updates and delete customers
+// Each customer is basically represented as objects in the array customers.
 function customerReducer(state, action) {
   let newState;
   switch (action.type) {
@@ -34,10 +38,12 @@ function customerReducer(state, action) {
       return state;
   }
   
-  // Save to localStorage after each action
+  // Saving the udpated customers array to after each of the action type defined above happens
   localStorage.setItem('customers', JSON.stringify(newState.customers));
   return newState;
 }
+
+
 export function CustomerProvider({ children }) {
   const [state, dispatch] = useReducer(customerReducer, { customers: loadCustomersFromLocalStorage() });
 

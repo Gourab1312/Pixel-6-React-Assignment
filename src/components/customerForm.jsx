@@ -12,9 +12,12 @@ import Address from "./Address";
 import Loader from "./Loader";
 
 function CustomerForm() {
+  //getting dispatch and state from the global context
   const { dispatch, state } = useCustomerContext();
+  // using navigate to go the customers list page when the form is submitted successfully and using id to check whether the component is being used for adding a customer or editing an existing customer (in the second case, it should have a valid id)
   const navigate = useNavigate();
   const { id } = useParams();
+  // keeping all the properties that a customer item in the customers array should have
   const [customer, setCustomer] = useState({
     pan: "",
     fullName: "",
@@ -24,11 +27,14 @@ function CustomerForm() {
       { addressLine1: "", addressLine2: "", postcode: "", state: "", city: "" },
     ],
   });
+  // defining the erros and loading state, loading is for submit button of the form
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [panLoading, setPanLoading] = useState(false);
   const [postcodeLoading, setPostcodeLoading] = useState(false);
 
+  // using the verifyPAN function from the utils and also handling the loading in the pan input using this useeffect
+  // we are also using a set time out here to basically show the loader, else it was happening so fast that it was looking like a glitch, same for the postcode input field
   useEffect(() => {
     if (validatePAN(customer.pan)) {
       setPanLoading(true);
@@ -43,6 +49,7 @@ function CustomerForm() {
     }
   }, [customer.pan]);
 
+  // we are judging that if this component is being used for edit or add, if edit, we are prefilling all the inputs and selects for the user
   useEffect(() => {
     if (id) {
       const customerToEdit = state.customers.find((c) => c.id === parseInt(id));
@@ -52,11 +59,13 @@ function CustomerForm() {
     }
   }, [id, state.customers]);
 
+  // this function is used for all the inputs and select elements, it takes the event that triggers it's call and manipulates the customer state using the name of the property that triggerd it at the first place and spreading all the prev customer data
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCustomer((prev) => ({ ...prev, [name]: value }));
   };
 
+// we are handling addresses along with that prefilling the state and city select elements if the field is postcode
   const handleAddressChange = (index, field, value) => {
     const newAddresses = [...customer.addresses];
     newAddresses[index][field] = value;
@@ -77,6 +86,7 @@ function CustomerForm() {
     }
   };
 
+  // function to define the basic structure of an address object and add it when the user clicks on the add address button
   const addAddress = () => {
     if (customer.addresses.length < 10) {
       setCustomer((prev) => ({
@@ -95,6 +105,7 @@ function CustomerForm() {
     }
   };
 
+  // function to filter out the address that the user wants to remove
   const removeAddress = (index) => {
     if (customer.addresses.length > 1) {
       const newAddresses = customer.addresses.filter((_, i) => i !== index);
@@ -102,6 +113,7 @@ function CustomerForm() {
     }
   };
 
+  // on the submit button this is validating every form field using the validators defined in the validators form and if everything is allright then only it is submitting the form
   const validateForm = () => {
     const newErrors = {};
     if (!validatePAN(customer.pan)) newErrors.pan = "Invalid PAN";
@@ -120,6 +132,11 @@ function CustomerForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  //on submitting the form
+  // first we are validting using the above function
+  // then we are checking if id is present then action type would be update, else add
+  // then we are handing the loading state of the submit button
+  // then we are navigating to the customers list page
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
