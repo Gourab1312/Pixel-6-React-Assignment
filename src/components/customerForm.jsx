@@ -31,7 +31,7 @@ function CustomerForm() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [panLoading, setPanLoading] = useState(false);
-  const [postcodeLoading, setPostcodeLoading] = useState(false);
+  const [postcodeLoading, setPostcodeLoading] = useState({});
 
   // using the verifyPAN function from the utils and also handling the loading in the pan input using this useeffect
   // we are also using a set time out here to basically show the loader, else it was happening so fast that it was looking like a glitch, same for the postcode input field
@@ -72,7 +72,7 @@ function CustomerForm() {
     setCustomer((prev) => ({ ...prev, addresses: newAddresses }));
 
     if (field === "postcode" && validatePostcode(value)) {
-      setPostcodeLoading(true);
+      setPostcodeLoading(prev => ({ ...prev, [index]: true }));
       getPostcodeDetails(value).then((response) => {
         setTimeout(() => {
           if (response.status === "Success") {
@@ -80,7 +80,7 @@ function CustomerForm() {
             newAddresses[index].city = response.city[0].name;
             setCustomer((prev) => ({ ...prev, addresses: newAddresses }));
           }
-          setPostcodeLoading(false);
+          setPostcodeLoading(prev => ({ ...prev, [index]: false }));
         }, 1000);
       });
     }
@@ -259,7 +259,7 @@ function CustomerForm() {
             address={address}
             allAddressLength={customer.addresses.length}
             index={index}
-            postcodeLoading={postcodeLoading}
+            postcodeLoading={postcodeLoading[index]}
             onChange={handleAddressChange}
             onRemove={() => removeAddress(index)}
           />
